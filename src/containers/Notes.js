@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import { API, Storage } from "aws-amplify";
 import { useParams, useHistory } from "react-router-dom";
 import LoaderButton from "../components/LoaderButton";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { onError } from "../libs/errorLib";
 import { s3Upload } from "../libs/awsLib";
 import config from "../config";
@@ -14,7 +15,7 @@ export default function Notes() {
   const history = useHistory();
   const [note, setNote] = useState(null);
   const [content, setContent] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
@@ -36,6 +37,8 @@ export default function Notes() {
       } catch (e) {
         onError(e);
       }
+
+      setIsLoading(false);
     }
 
     onLoad();
@@ -119,7 +122,7 @@ export default function Notes() {
 
   return (
     <div className="Notes">
-      {note && (
+      {note ? (
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="content">
             <Form.Control
@@ -162,7 +165,8 @@ export default function Notes() {
             Delete
           </LoaderButton>
         </Form>
-      )}
+      ) : 
+      <LoadingSpinner /> }
     </div>
   );
 }
